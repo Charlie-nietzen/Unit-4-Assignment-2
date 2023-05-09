@@ -1,7 +1,5 @@
 from rich.console import Console
 from rich.table import Table
-from rich import pretty
-
 
 def readFile(dataSource):
     dataSource = open(dataSource, "r")
@@ -22,13 +20,13 @@ def fieldKeys():
     print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
 
 
-def displayData(dataSource, data=[""]):
+def displayData(dataSource, data=None):
     dataTable = Table()
 
     dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
     dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
 
-    if data == [""]:  # if data is empty, read the data from the file
+    if data is None:  # if data is empty, read the data from the file
         data = readFile(dataSource)
 
     for student in data:
@@ -199,7 +197,6 @@ while True:
         case 8:
             deleteStudent(fileSource)
 
-    print("")
-    tPause = input("Press enter to continue: ")
+    pause = input("\nPress enter to continue: ")
 # end while
 # end MAIN
