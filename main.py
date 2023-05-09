@@ -2,6 +2,7 @@ from rich.console import Console
 from rich.table import Table
 from rich import pretty
 
+
 def readFile(tFile):
     fileSource = open(tFile, "r")
     tDataIn = fileSource.read()
@@ -9,19 +10,23 @@ def readFile(tFile):
     tDataIn = eval(tDataIn)
     return (tDataIn)
 
+
 def writeFile(tFile, tData):
     fileSource = open(tFile, "w")
     tData = str(tData)
     fileSource.write(tData)
     fileSource.close()
 
-def displayData(dataSource):
+
+def displayData(dataSource, tData=[""]):
     dataTable = Table()
 
     dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
     dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
 
-    tData = readFile(dataSource)
+    if tData == [""]:  # if tData is empty, read the data from the file
+        tData = readFile(dataSource)
+
     for tRecord in tData:
         tRecordOut = []
         for tField in tRecord:
@@ -31,18 +36,16 @@ def displayData(dataSource):
     console = Console()
     console.print(dataTable)
 
+
 def displaySorted(dataSource):
     tData = readFile(dataSource)
     print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
     tSortItem = input("Sort Records by which Field: ")
     tSortItem = int(tSortItem)
-    tSortedList = sorted(tData, key=lambda tRecordNum: tRecordNum[tSortItem-1])
-    for tRecord in tSortedList:
-        tRecordOut = ""
-        for tField in tRecord:
-            tRecordOut = tRecordOut + tField + ","
-        print(tRecordOut)
+    tSortedList = sorted(tData, key=lambda tRecordNum: tRecordNum[tSortItem - 1])
+    displayData(dataSource, tSortedList)
     print("Display Sorted Records Complete.")
+
 
 def displayFound(dataSource):
     tData = readFile(dataSource)
@@ -151,7 +154,7 @@ def deleteStudent(dataSource):
 # MAIN
 fileSource = "studentData.txt"
 
-while True:
+def showMenu():
     table = Table()
 
     table.add_column("Input", justify="right", style="cyan")
@@ -168,6 +171,9 @@ while True:
     console = Console()
     console.print(table)
 
+
+while True:
+    showMenu()
     selection = int(input("Enter your choice: "))
     fileSource = "studentData.txt"
 
