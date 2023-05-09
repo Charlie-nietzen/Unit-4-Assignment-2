@@ -2,108 +2,107 @@ from rich.console import Console
 from rich.table import Table
 from rich import pretty
 
-
-def readFile(tFile):
-    fileSource = open(tFile, "r")
-    tDataIn = fileSource.read()
+def readFile(dataSource):
+    fileSource = open(dataSource, "r")
+    dataIn = fileSource.read()
     fileSource.close()
-    tDataIn = eval(tDataIn)
-    return (tDataIn)
+    dataIn = eval(dataIn)
+    return (dataIn)
 
 
-def writeFile(tFile, tData):
-    fileSource = open(tFile, "w")
-    tData = str(tData)
-    fileSource.write(tData)
+def writeFile(dataSource, data):
+    fileSource = open(dataSource, "w")
+    data = str(data)
+    fileSource.write(data)
     fileSource.close()
 
+def fieldKeys():
+    print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
 
-def displayData(dataSource, tData=[""]):
+def displayData(dataSource, data=[""]):
     dataTable = Table()
 
     dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
     dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
 
-    if tData == [""]:  # if tData is empty, read the data from the file
-        tData = readFile(dataSource)
+    if data == [""]:  # if data is empty, read the data from the file
+        data = readFile(dataSource)
 
-    for tRecord in tData:
-        tRecordOut = []
-        for tField in tRecord:
-            tRecordOut.append(tField)
-        dataTable.add_row(tRecordOut[0], tRecordOut[1], tRecordOut[2], tRecordOut[3], tRecordOut[4], tRecordOut[5])
+    for student in data:
+        studentOut = []
+        for item in student:
+            studentOut.append(item)
+        dataTable.add_row(studentOut[0], studentOut[1], studentOut[2], studentOut[3], studentOut[4], studentOut[5])
 
     console = Console()
     console.print(dataTable)
 
 
 def displaySorted(dataSource):
-    tData = readFile(dataSource)
-    print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
-    tSortItem = input("Sort Records by which Field: ")
-    tSortItem = int(tSortItem)
-    tSortedList = sorted(tData, key=lambda tRecordNum: tRecordNum[tSortItem - 1])
-    displayData(dataSource, tSortedList)
+    data = readFile(dataSource)
+    fieldKeys()
+    fieldToSort = input("Sort Records by which Field: ")
+    fieldToSort = int(fieldToSort)
+    sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1])
+    displayData(dataSource, sortedList)
     print("Display Sorted Records Complete.")
 
 
 def displayFound(dataSource):
-    tData = readFile(dataSource)
-    tFindText = input("Enter the text to find: ")
-    for tRecord in tData:
-        tRecordOut = ""
-        for tField in tRecord:
-            tRecordOut = tRecordOut + tField + ","
-        if tFindText in tRecordOut:
-            tFoundText = "\033[0;31m" + tFindText + "\033[0m"
-            tRecordOut = tRecordOut.replace(tFindText, tFoundText)
-            print(tRecordOut)
+    data = readFile(dataSource)
+    textToFind = input("Enter the text to find: ")
+    for student in data:
+        studentOut = ""
+        for item in student:
+            studentOut = studentOut + item + ","
+        if textToFind in studentOut:
+            tFoundText = "\033[0;31m" + textToFind + "\033[0m"
+            studentOut = studentOut.replace(textToFind, tFoundText)
+            print(studentOut)
     print("Display Found Records Complete.")
 
 
 def displayFoundField(dataSource):
-    tData = readFile(dataSource)
-    tFindField = input("Enter the field number to search: ")
-    tFindField = int(tFindField)
-    tFindText = input("Enter the text to find: ")
-    for tRecord in tData:
-        tRecordOut = ""
-        if tFindText in tRecord[tFindField]:
-            for tField in tRecord:
-                tRecordOut = tRecordOut + tField + ","
-            # end for tField 
-            print(tRecordOut)
-        # end if tFindText
-    # end for tRecord
+    data = readFile(dataSource)
+    fieldKeys()
+    fieldToSearch = input("Enter the field number to search: ")
+    fieldToSearch = int(fieldToSearch)
+    textToFind = input("Enter the text to find: ")
+    for student in data:
+        studentOut = ""
+        if textToFind in student[fieldToSearch-1]:
+            for item in student:
+                studentOut = studentOut + item + ","
+            # end for item 
+            print(studentOut)
+        # end if foundField
+    # end for student
     print("Display Found Records Complete.")
 
 
 # end displayFoundField
 
-
 def createStudent(dataSource):
-    tData = readFile(dataSource)
+    data = readFile(dataSource)
     t1stFld = input("Enter ID: ")
     t2ndFld = input("Enter First Name: ")
     t3rdFld = input("Enter Second Name: ")
     t4thFld = input("Enter Gender: ")
-    tData.append([t1stFld, t2ndFld, t3rdFld, t4thFld, '-', '-', '-', ])
-    writeFile(dataSource, tData)
+    data.append([t1stFld, t2ndFld, t3rdFld, t4thFld, '-', '-', '-', ])
+    writeFile(dataSource, data)
     print("Create Record Complete.")
-
 
 # end createStudent
 
-
 def readData(dataSource):
-    tData = readFile(dataSource)
-    tRecordNum = input("Enter the Record Number: ")
-    tRecordNum = int(tRecordNum)
-    tRecordOut = ""
-    for tField in tData[tRecordNum]:
-        tRecordOut = tRecordOut + tField + ","
-    print(tRecordOut)
-    # end for tRecord
+    data = readFile(dataSource)
+    studentNum = input("Enter the Record Number: ")
+    studentNum = int(studentNum)
+    studentOut = ""
+    for item in data[studentNum]:
+        studentOut = studentOut + item + ","
+    print(studentOut)
+    # end for student
     print("Read Record Complete.")
 
 
@@ -111,43 +110,41 @@ def readData(dataSource):
 
 
 def updateStudent(dataSource):
-    tData = readFile(dataSource)
-    tIDSearch = input("Enter the 1st Field: ")
-    tCount = 0
-    tIDField = tData[0][0]
-    while tIDSearch != tIDField:
-        tCount += 1
-        tIDField = tData[tCount][0]
-    # end for tRecord
-    print(tData[tCount])
+    data = readFile(dataSource)
+    idSearch = input("Enter the 1st Field: ")
+    num = 0
+    idField = data[0][0]
+    while idSearch != idField:
+        num += 1
+        idField = data[num][0]
+    # end for student
+    print(data[num])
     tG1 = input("Update Grade 1: ")
     tG2 = input("Update Grade 2: ")
     tG3 = input("Update Grade 3: ")
-    tData[tCount][4] = tG1
-    tData[tCount][5] = tG2
-    tData[tCount][6] = tG3
-    print(tData[tCount])
-    writeFile(dataSource, tData)
+    data[num][3] = tG1
+    data[num][4] = tG2
+    data[num][5] = tG3
+    print(data[num])
+    writeFile(dataSource, data)
     print("Update Record Complete.")
-
-
 # end updateStudent
 
 
 def deleteStudent(dataSource):
-    tData = readFile(dataSource)
+    data = readFile(dataSource)
     tIDSearch = input("Enter ID: ")
-    tCount = 0
-    tIDField = tData[0][0]
+    num = 0
+    tIDField = data[0][0]
     while tIDSearch != tIDField:
-        tCount += 1
-        tIDField = tData[tCount][0]
-    # end for tRecord
-    if tCount != 0:
-        print(tData[tCount])
-        tData.remove(tData[tCount])
-    # end if tCount
-    writeFile(dataSource, tData)
+        num += 1
+        tIDField = data[num][0]
+    # end for student
+    if num != 0:
+        print(data[num])
+        data.remove(data[num])
+    # end if num
+    writeFile(dataSource, data)
     print("Delete Record Complete.")
 
 
@@ -167,15 +164,14 @@ def showMenu():
     table.add_row("5", "Create a Record")
     table.add_row("6", "Read a Record")
     table.add_row("7", "Update a Record")
+    table.add_row("8", "Delete a Record")
 
     console = Console()
     console.print(table)
 
-
 while True:
     showMenu()
     selection = int(input("Enter your choice: "))
-    fileSource = "studentData.txt"
 
     match selection:
         case 1:
