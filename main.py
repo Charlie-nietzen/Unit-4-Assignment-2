@@ -2,23 +2,6 @@ from rich.console import Console
 from rich.table import Table
 from rich import pretty
 
-def displayData(dataSource):
-    table = Table()
-
-    table.add_column("ID"),table.add_column("First Name"),table.add_column("Last Name")
-    table.add_column("Score 1"), table.add_column("Score 2"), table.add_column("Score 3")
-
-    tData = readFile(dataSource)
-    for tRecord in tData:
-        tRecordOut = []
-        for tField in tRecord:
-            tRecordOut.append(tField)
-        table.add_row(tRecordOut[0], tRecordOut[1], tRecordOut[2], tRecordOut[3], tRecordOut[4], tRecordOut[5],
-                      tRecordOut[6])
-
-    console = Console()
-    console.print(table)
-
 def readFile(tFile):
     fileSource = open(tFile, "r")
     tDataIn = fileSource.read()
@@ -33,18 +16,27 @@ def writeFile(tFile, tData):
     fileSource.close()
 
 def displayData(dataSource):
+    dataTable = Table()
+
+    dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
+    dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
+
     tData = readFile(dataSource)
     for tRecord in tData:
-        tRecordOut = ""
+        tRecordOut = []
         for tField in tRecord:
-            tRecordOut = tRecordOut + tField + ","
-        print(tRecordOut)
+            tRecordOut.append(tField)
+        dataTable.add_row(tRecordOut[0], tRecordOut[1], tRecordOut[2], tRecordOut[3], tRecordOut[4], tRecordOut[5])
+
+    console = Console()
+    console.print(dataTable)
 
 def displaySorted(dataSource):
     tData = readFile(dataSource)
+    print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
     tSortItem = input("Sort Records by which Field: ")
     tSortItem = int(tSortItem)
-    tSortedList = sorted(tData, key=lambda tRecordNum: tRecordNum[tSortItem])
+    tSortedList = sorted(tData, key=lambda tRecordNum: tRecordNum[tSortItem-1])
     for tRecord in tSortedList:
         tRecordOut = ""
         for tField in tRecord:
@@ -64,6 +56,7 @@ def displayFound(dataSource):
             tRecordOut = tRecordOut.replace(tFindText, tFoundText)
             print(tRecordOut)
     print("Display Found Records Complete.")
+
 
 def displayFoundField(dataSource):
     tData = readFile(dataSource)
@@ -159,7 +152,6 @@ def deleteStudent(dataSource):
 fileSource = "studentData.txt"
 
 while True:
-    displayData(fileSource)
     table = Table()
 
     table.add_column("Input", justify="right", style="cyan")
