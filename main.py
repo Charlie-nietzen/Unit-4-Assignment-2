@@ -184,21 +184,17 @@ def showMenu():
 
 def getSelection():
     showMenu()
+    innerSelection = 0
     try:
         innerSelection = int(input("Enter your choice: "))
-        if innerSelection < 1 or innerSelection > 8:
-            raise ValueError
     except ValueError:
-        print("Please enter an integer from 1-8.")
-        return "failed"
+        print("Please enter an input 1-8.")
+        getSelection()
     return innerSelection
 
 
 while True:
-    selection = "failed"
-
-    while selection == "failed":
-        selection = getSelection()
+    selection = getSelection()
 
     match selection:
         case 1:
