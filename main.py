@@ -3,6 +3,7 @@ from rich.table import Table
 
 import os
 
+
 def readFile(dataSource):
     dataSource = open(dataSource, "r")
     dataIn = dataSource.read()
@@ -181,9 +182,23 @@ def showMenu():
     console.print(table)
 
 
-while True:
+def getSelection():
     showMenu()
-    selection = int(input("Enter your choice: "))
+    try:
+        innerSelection = int(input("Enter your choice: "))
+        if innerSelection < 1 or innerSelection > 8:
+            raise ValueError
+    except ValueError:
+        print("Please enter an integer from 1-8.")
+        return "failed"
+    return innerSelection
+
+
+while True:
+    selection = "failed"
+
+    while selection == "failed":
+        selection = getSelection()
 
     match selection:
         case 1:
@@ -204,6 +219,5 @@ while True:
             deleteStudent(fileSource)
 
     pause = input("\nPress enter to continue: ")
-    clearScreen()
 # end while
 # end MAIN
