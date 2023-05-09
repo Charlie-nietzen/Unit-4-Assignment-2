@@ -2,22 +2,25 @@ from rich.console import Console
 from rich.table import Table
 from rich import pretty
 
+
 def readFile(dataSource):
-    fileSource = open(dataSource, "r")
-    dataIn = fileSource.read()
-    fileSource.close()
+    dataSource = open(dataSource, "r")
+    dataIn = dataSource.read()
+    dataSource.close()
     dataIn = eval(dataIn)
-    return (dataIn)
+    return dataIn
 
 
 def writeFile(dataSource, data):
-    fileSource = open(dataSource, "w")
+    dataSource = open(dataSource, "w")
     data = str(data)
-    fileSource.write(data)
-    fileSource.close()
+    dataSource.write(data)
+    dataSource.close()
+
 
 def fieldKeys():
     print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
+
 
 def displayData(dataSource, data=[""]):
     dataTable = Table()
@@ -70,7 +73,7 @@ def displayFoundField(dataSource):
     textToFind = input("Enter the text to find: ")
     for student in data:
         studentOut = ""
-        if textToFind in student[fieldToSearch-1]:
+        if textToFind in student[fieldToSearch - 1]:
             for item in student:
                 studentOut = studentOut + item + ","
             # end for item 
@@ -91,6 +94,7 @@ def createStudent(dataSource):
     data.append([t1stFld, t2ndFld, t3rdFld, t4thFld, '-', '-', '-', ])
     writeFile(dataSource, data)
     print("Create Record Complete.")
+
 
 # end createStudent
 
@@ -128,17 +132,19 @@ def updateStudent(dataSource):
     print(data[num])
     writeFile(dataSource, data)
     print("Update Record Complete.")
+
+
 # end updateStudent
 
 
 def deleteStudent(dataSource):
     data = readFile(dataSource)
-    tIDSearch = input("Enter ID: ")
+    idSearch = input("Enter ID: ")
     num = 0
-    tIDField = data[0][0]
-    while tIDSearch != tIDField:
+    idField = data[0][0]
+    while idSearch != idField:
         num += 1
-        tIDField = data[num][0]
+        idField = data[num][0]
     # end for student
     if num != 0:
         print(data[num])
@@ -150,6 +156,7 @@ def deleteStudent(dataSource):
 
 # MAIN
 fileSource = "studentData.txt"
+
 
 def showMenu():
     table = Table()
@@ -168,6 +175,7 @@ def showMenu():
 
     console = Console()
     console.print(table)
+
 
 while True:
     showMenu()
