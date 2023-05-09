@@ -1,6 +1,8 @@
 from rich.console import Console
 from rich.table import Table
 
+import os
+
 def readFile(dataSource):
     dataSource = open(dataSource, "r")
     dataIn = dataSource.read()
@@ -19,6 +21,10 @@ def writeFile(dataSource, data):
 def fieldKeys():
     print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
 
+def clearScreen():
+    def cls():
+        os.system('cls' if os.name == 'nt' else 'clear')
+    cls()
 
 def displayData(dataSource, data=None):
     dataTable = Table()
@@ -198,5 +204,6 @@ while True:
             deleteStudent(fileSource)
 
     pause = input("\nPress enter to continue: ")
+    clearScreen()
 # end while
 # end MAIN
