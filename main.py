@@ -165,18 +165,25 @@ def updateStudent(dataSource):
 
 def deleteStudent(dataSource):
     data = readFile(dataSource)
-    idSearch = input("Enter the Student's ID: ")
-    num = 0
-    idField = data[0][0]
-    while idSearch != idField:
-        num += 1
-        idField = data[num][0]
-    if num != 0:
-        print(data[num])
-        data.remove(data[num])
-    writeFile(dataSource, data)
-    print("Delete Record Complete.")
 
+    try:
+        idSearch = input("Enter the Student's ID: ")
+
+        num = 0
+        idField = data[0][0]
+        while idSearch != idField:
+            num += 1
+            idField = data[num][0]
+        if num != 0:
+            print(data[num])
+            data.remove(data[num])
+
+            writeFile(dataSource, data)
+            print("Delete Record Complete.")
+    except ValueError:
+        print("Invalid ID, see all records for list of IDs")
+    except IndexError:
+        print("Invalid ID, see all records for list of IDs")
 
 def showMenu():
     table = Table()
