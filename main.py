@@ -141,26 +141,32 @@ def readData(dataSource):
 
 def updateStudent(dataSource):
     data = readFile(dataSource)
-    idSearch = input("Enter the Student's ID: ")
-    num = 0
-    idField = data[0][0]
-    while idSearch != idField:
-        num += 1
-        idField = data[num][0]
 
-    print(data[num])
-    score1 = int(input("Update Score 1: "))
-    score2 = int(input("Update Score 2: "))
-    score3 = int(input("Update Score 3: "))
+    try:
+        idSearch = input("Enter the Student's ID: ")
+        num = 0
+        idField = data[0][0]
+        while idSearch != idField:
+            num += 1
+            idField = data[num][0]
 
-    data[num][3] = score1
-    data[num][4] = score2
-    data[num][5] = score3
-    print(data[num])
+        print(data[num])
+        score1 = int(input("Update Score 1: "))
+        score2 = int(input("Update Score 2: "))
+        score3 = int(input("Update Score 3: "))
 
-    writeFile(dataSource, data)
-    getAverage(dataSource)
-    print("Update Record Complete.")
+        data[num][3] = score1
+        data[num][4] = score2
+        data[num][5] = score3
+        print(data[num])
+
+        writeFile(dataSource, data)
+        getAverage(dataSource)
+        print("Update Record Complete.")
+    except ValueError:
+        print("Invalid ID, see all records for list of IDs")
+    except IndexError:
+        print("Invalid ID, see all records for list of IDs")
 
 
 def deleteStudent(dataSource):
@@ -184,6 +190,7 @@ def deleteStudent(dataSource):
         print("Invalid ID, see all records for list of IDs")
     except IndexError:
         print("Invalid ID, see all records for list of IDs")
+
 
 def showMenu():
     table = Table()
