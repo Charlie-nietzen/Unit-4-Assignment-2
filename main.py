@@ -1,10 +1,7 @@
-from statistics import mean
-
 from rich.console import Console
 from rich.table import Table
 
 import os
-import random
 
 
 def readFile(dataSource):
@@ -96,9 +93,9 @@ def displayFound(dataSource):
     for student in data:
         studentOut = ""
         for item in student:
-            studentOut = studentOut + item + ","
+            studentOut = studentOut + str(item) + ","
         if textToFind in studentOut:
-            tFoundText = "\033[0;31m" + textToFind + "\033[0m"
+            tFoundText = "\033[0;31m" + textToFind + "\033[0m"  # set text that matches the search to red for visibility
             studentOut = studentOut.replace(textToFind, tFoundText)
             print(studentOut)
     print("Display Found Records Complete.")
@@ -114,7 +111,7 @@ def displayFoundField(dataSource):
         studentOut = ""
         if textToFind in student[fieldToSearch - 1]:
             for item in student:
-                studentOut = studentOut + item + ","
+                studentOut = studentOut + str(item) + ","
             print(studentOut)
 
     print("Display Found Records Complete.")
@@ -144,7 +141,7 @@ def readData(dataSource):
 
 def updateStudent(dataSource):
     data = readFile(dataSource)
-    idSearch = input("Enter the 1st Field: ")
+    idSearch = input("Enter the Student's ID: ")
     num = 0
     idField = data[0][0]
     while idSearch != idField:
@@ -159,12 +156,13 @@ def updateStudent(dataSource):
     data[num][5] = tG3
     print(data[num])
     writeFile(dataSource, data)
+    getAverage(dataSource)
     print("Update Record Complete.")
 
 
 def deleteStudent(dataSource):
     data = readFile(dataSource)
-    idSearch = input("Enter ID: ")
+    idSearch = input("Enter the Student's ID: ")
     num = 0
     idField = data[0][0]
     while idSearch != idField:
@@ -212,7 +210,6 @@ def getSelection():
 # MAIN PROGRAM
 
 fileSource = "studentData.txt"
-getAverage(fileSource)
 
 while True:
     selection = "failed"
