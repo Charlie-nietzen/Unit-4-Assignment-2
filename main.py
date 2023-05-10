@@ -1,7 +1,10 @@
+from statistics import mean
+
 from rich.console import Console
 from rich.table import Table
 
 import os
+import random
 
 
 def readFile(dataSource):
@@ -19,19 +22,37 @@ def writeFile(dataSource, data):
     dataSource.close()
 
 
+def getAverage(dataSource):
+    data = readFile(dataSource)
+
+    for student in data:
+        student[6] = round((student[3] + student[4] + student[5]) / 3)  # uses python's round() function
+        # to get an integer value
+    writeFile(dataSource, data)
+
+
 def fieldKeys():
-    print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score 3")
+    print("Key for Sorting:\n1: ID\n2: First Name\n3: Last Name\n4: Score 1\n5: Score 2\n6: Score\n7: Average")
 
 
 def clearScreen():
     os.system('cls||clear')
 
 
-def displayData(dataSource, data=None):
+def displayData(dataSource, data=None, leaderboard=False):
     dataTable = Table()
 
+    rank = 1
+
+    if leaderboard:
+        dataTable.add_column("Rank", justify="right")
+
     dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
-    dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
+
+    if not leaderboard:
+        dataTable.add_column("Score 1"), dataTable.add_column("Score 2"), dataTable.add_column("Score 3")
+
+    dataTable.add_column("Average")
 
     if data is None:  # if data is empty, read the data from the file
         data = readFile(dataSource)
@@ -40,19 +61,32 @@ def displayData(dataSource, data=None):
         studentOut = []
         for item in student:
             studentOut.append(item)
-        dataTable.add_row(studentOut[0], studentOut[1], studentOut[2], studentOut[3], studentOut[4], studentOut[5])
+        if leaderboard:
+            dataTable.add_row(str(rank), studentOut[0], studentOut[1], studentOut[2], str(studentOut[6]))
+            rank += 1
+        else:
+            dataTable.add_row(studentOut[0], studentOut[1], studentOut[2], str(studentOut[3]), str(studentOut[4]),
+                              str(studentOut[5]), str(studentOut[6]))
 
     console = Console()
     console.print(dataTable)
 
 
-def displaySorted(dataSource):
+def displaySorted(dataSource, leaderboard=False):
     data = readFile(dataSource)
     fieldKeys()
-    fieldToSort = input("Sort Records by which Field: ")
+    if leaderboard:
+        fieldToSort = 7  # sort by average score if presenting leaderboard
+    else:
+        fieldToSort = input("Sort Records by which Field: ")
     fieldToSort = int(fieldToSort)
-    sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1])
-    displayData(dataSource, sortedList)
+    sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1], reverse=True)
+
+    if leaderboard:
+        displayData(dataSource, sortedList, True)
+    else:
+        displayData(dataSource, sortedList)
+
     print("Display Sorted Records Complete.")
 
 
@@ -81,14 +115,10 @@ def displayFoundField(dataSource):
         if textToFind in student[fieldToSearch - 1]:
             for item in student:
                 studentOut = studentOut + item + ","
-            # end for item 
             print(studentOut)
-        # end if foundField
-    # end for student
+
     print("Display Found Records Complete.")
 
-
-# end displayFoundField
 
 def createStudent(dataSource):
     data = readFile(dataSource)
@@ -101,8 +131,6 @@ def createStudent(dataSource):
     print("Create Record Complete.")
 
 
-# end createStudent
-
 def readData(dataSource):
     data = readFile(dataSource)
     studentNum = input("Enter the Record Number: ")
@@ -111,11 +139,7 @@ def readData(dataSource):
     for item in data[studentNum]:
         studentOut = studentOut + item + ","
     print(studentOut)
-    # end for student
     print("Read Record Complete.")
-
-
-# end readData
 
 
 def updateStudent(dataSource):
@@ -126,7 +150,6 @@ def updateStudent(dataSource):
     while idSearch != idField:
         num += 1
         idField = data[num][0]
-    # end for student
     print(data[num])
     tG1 = input("Update Grade 1: ")
     tG2 = input("Update Grade 2: ")
@@ -139,9 +162,6 @@ def updateStudent(dataSource):
     print("Update Record Complete.")
 
 
-# end updateStudent
-
-
 def deleteStudent(dataSource):
     data = readFile(dataSource)
     idSearch = input("Enter ID: ")
@@ -150,17 +170,11 @@ def deleteStudent(dataSource):
     while idSearch != idField:
         num += 1
         idField = data[num][0]
-    # end for student
     if num != 0:
         print(data[num])
         data.remove(data[num])
-    # end if num
     writeFile(dataSource, data)
     print("Delete Record Complete.")
-
-
-# MAIN
-fileSource = "studentData.txt"
 
 
 def showMenu():
@@ -177,6 +191,7 @@ def showMenu():
     table.add_row("6", "Read a Record")
     table.add_row("7", "Update a Record")
     table.add_row("8", "Delete a Record")
+    table.add_row("9", "Show Leaderboard")
 
     console = Console()
     console.print(table)
@@ -186,13 +201,18 @@ def getSelection():
     showMenu()
     try:
         innerSelection = int(input("Enter your choice: "))
-        if innerSelection < 1 or innerSelection > 8:
+        if innerSelection < 1 or innerSelection > 9:
             raise ValueError
     except ValueError:
-        print("Please enter an integer from 1-8.")
+        print("Please enter an integer from 1-9.")
         return "failed"
     return innerSelection
 
+
+# MAIN PROGRAM
+
+fileSource = "studentData.txt"
+getAverage(fileSource)
 
 while True:
     selection = "failed"
@@ -217,7 +237,7 @@ while True:
             updateStudent(fileSource)
         case 8:
             deleteStudent(fileSource)
+        case 9:
+            displaySorted(fileSource, True)
 
     pause = input("\nPress enter to continue: ")
-# end while
-# end MAIN
