@@ -23,7 +23,7 @@ def getAverage(dataSource):
     data = readFile(dataSource)
 
     for student in data:
-        student[6] = round((student[3] + student[4] + student[5]) / 3)  # uses python's round() function
+        student[6] = round((int(student[3]) + int(student[4]) + int(student[5])) / 3)  # uses python's round() function
         # to get an integer value
     writeFile(dataSource, data)
 
@@ -147,14 +147,17 @@ def updateStudent(dataSource):
     while idSearch != idField:
         num += 1
         idField = data[num][0]
+
     print(data[num])
-    tG1 = input("Update Grade 1: ")
-    tG2 = input("Update Grade 2: ")
-    tG3 = input("Update Grade 3: ")
-    data[num][3] = tG1
-    data[num][4] = tG2
-    data[num][5] = tG3
+    score1 = int(input("Update Score 1: "))
+    score2 = int(input("Update Score 2: "))
+    score3 = int(input("Update Score 3: "))
+
+    data[num][3] = score1
+    data[num][4] = score2
+    data[num][5] = score3
     print(data[num])
+
     writeFile(dataSource, data)
     getAverage(dataSource)
     print("Update Record Complete.")
