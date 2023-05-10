@@ -5,17 +5,17 @@ import os
 
 
 def readFile(dataSource):
-    dataSource = open(dataSource, "r")
+    dataSource = open(dataSource, "r")  # open file
     dataIn = dataSource.read()
     dataSource.close()
-    dataIn = eval(dataIn)
+    dataIn = eval(dataIn)  # convert dataIn to a list
     return dataIn
 
 
 def writeFile(dataSource, data):
     dataSource = open(dataSource, "w")
-    data = str(data)
-    dataSource.write(data)
+    data = str(data)  # convert data to a string
+    dataSource.write(data)  # update the file with the new data
     dataSource.close()
 
 
@@ -33,7 +33,7 @@ def fieldKeys():
 
 
 def clearScreen():
-    os.system('cls||clear')
+    os.system('cls||clear')  # clears the screen
 
 
 def displayData(dataSource, data=None, leaderboard=False):
@@ -42,7 +42,7 @@ def displayData(dataSource, data=None, leaderboard=False):
     rank = 1
 
     if leaderboard:
-        dataTable.add_column("Rank", justify="right")
+        dataTable.add_column("Rank", justify="right")  # if creating a leaderboard, add the rank column
 
     dataTable.add_column("ID"), dataTable.add_column("First Name"), dataTable.add_column("Last Name")
 
@@ -71,23 +71,22 @@ def displayData(dataSource, data=None, leaderboard=False):
 
 def displaySorted(dataSource, leaderboard=False):
     data = readFile(dataSource)
-    fieldKeys()
+    fieldKeys()  # prints out the options for sorting
     if leaderboard:
         fieldToSort = 7  # sort by average score if presenting leaderboard
     else:
         fieldToSort = input("Sort Records by which Field: ")
     fieldToSort = int(fieldToSort)
-    sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1], reverse=True)
+    sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1], reverse=True)  # sorts the data by
+    # the key given, and reverses the list, so it is in descending order
 
     if leaderboard:
         displayData(dataSource, sortedList, True)
     else:
         displayData(dataSource, sortedList)
 
-    print("Display Sorted Records Complete.")
 
-
-def displayFound(dataSource):
+def displayFound(dataSource):  # prints all results that match a given string
     data = readFile(dataSource)
     textToFind = input("Enter the text to find: ")
     for student in data:
@@ -98,10 +97,9 @@ def displayFound(dataSource):
             tFoundText = "\033[0;31m" + textToFind + "\033[0m"  # set text that matches the search to red for visibility
             studentOut = studentOut.replace(textToFind, tFoundText)
             print(studentOut)
-    print("Display Found Records Complete.")
 
 
-def displayFoundField(dataSource):
+def displayFoundField(dataSource):  # prints all results that match a given string, within a given field
     data = readFile(dataSource)
     fieldKeys()
     fieldToSearch = input("Enter the field number to search: ")
@@ -114,18 +112,79 @@ def displayFoundField(dataSource):
                 studentOut = studentOut + str(item) + ","
             print(studentOut)
 
-    print("Display Found Records Complete.")
+
+def getStudentID(dataSource):
+    studentID = input("Enter Student ID in format 'S000': ")
+
+    length = True
+    firstChar = True
+    threeNum = True
+
+    taken = False
+
+    try:
+        if len(studentID) != 4:
+            length = False
+        if studentID[0] != "S":
+            firstChar = False
+        if not int(studentID[1]) > 0 and int(studentID[1]) < 10:  # if the character is not between 1 and 9
+            threeNum = False
+        if not int(studentID[2]) >= 0 and int(studentID[2]) < 10:  # if the character is not between 0 and 9
+            threeNum = False
+        if not int(studentID[3]) >= 0 and int(studentID[3]) < 10:  # if the character is not between 0 and 9
+            threeNum = False
+    except ValueError:  # if a non-numeric character is entered
+        threeNum = False
+
+    data = readFile(dataSource)
+    for student in data:
+        if student[0] == studentID:
+            taken = True  # check each student to see if it is already taken
+
+    if taken:
+        print("Student ID already taken.")
+        return "S000"  # if the student ID is already taken, return a false ID to rerun the function
+
+    if length and firstChar and threeNum and not taken:
+        return studentID  # if there are no errors, return the student ID
+
+    # Continue if there are errors
+
+    table = Table(title="Errors Detected")  # create a table to display errors
+
+    table.add_column("Number", justify="right")
+    table.add_column("Description")
+    errorNum = 1
+
+    if not length:
+        table.add_row(str(errorNum), "Length of the Student ID must be 4 digits, including the 'S' character.")
+        errorNum += 1
+    if not firstChar:
+        table.add_row(str(errorNum), "First character of the Student ID must be 'S'.")
+    if not threeNum:
+        table.add_row(str(errorNum), "The second to fourth characters of the Student ID must be"
+                                     " numbers between 0 and 9, beginning at 100.")
+    Console().print(table)
+    return "S000"  # return a false ID to rerun the function
 
 
 def createStudent(dataSource):
     data = readFile(dataSource)
-    t1stFld = input("Enter ID: ")
-    t2ndFld = input("Enter First Name: ")
-    t3rdFld = input("Enter Second Name: ")
-    t4thFld = input("Enter Gender: ")
-    data.append([t1stFld, t2ndFld, t3rdFld, t4thFld, '-', '-', '-', ])
-    writeFile(dataSource, data)
-    print("Create Record Complete.")
+
+    studentID = "S000"
+    firstName = "X"
+    surname = "X"
+
+    if len(data) < 13:
+        while studentID == "S000":
+            studentID = getStudentID(dataSource)
+        firstName = input("Enter First Name: ")
+        surname = input("Enter Surname: ")
+        data.append([studentID, firstName, surname, '-', '-', '-', ])
+        writeFile(dataSource, data)
+        print("Student has been added.")
+    else:
+        print("Maximum number of students reached. Please delete a record before creating a new one.")
 
 
 def readData(dataSource):
@@ -136,7 +195,6 @@ def readData(dataSource):
     for item in data[studentNum]:
         studentOut = studentOut + item + ","
     print(studentOut)
-    print("Read Record Complete.")
 
 
 def updateStudent(dataSource):
@@ -162,7 +220,7 @@ def updateStudent(dataSource):
 
         writeFile(dataSource, data)
         getAverage(dataSource)
-        print("Update Record Complete.")
+        print("Student's data has been updated.")
     except ValueError:
         print("Invalid ID, see all records for list of IDs")
     except IndexError:
@@ -185,7 +243,7 @@ def deleteStudent(dataSource):
             data.remove(data[num])
 
             writeFile(dataSource, data)
-            print("Delete Record Complete.")
+            print("Student data has been deleted.")
     except ValueError:
         print("Invalid ID, see all records for list of IDs")
     except IndexError:
