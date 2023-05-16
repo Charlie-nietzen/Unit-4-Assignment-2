@@ -38,6 +38,7 @@ def clearScreen():
 
 def displayData(dataSource, data=None, leaderboard=False):
     dataTable = Table()
+    getAverage(dataSource)
 
     rank = 1
 
@@ -56,6 +57,10 @@ def displayData(dataSource, data=None, leaderboard=False):
 
     for student in data:
         studentOut = []
+        if student[6] == -1 and leaderboard:  # if there is no average score yet, then pass over this
+            # student for the leaderboard
+            continue
+
         for item in student:
             studentOut.append(item)
         if leaderboard:
@@ -71,10 +76,11 @@ def displayData(dataSource, data=None, leaderboard=False):
 
 def displaySorted(dataSource, leaderboard=False):
     data = readFile(dataSource)
-    fieldKeys()  # prints out the options for sorting
+    getAverage(dataSource)
     if leaderboard:
         fieldToSort = 7  # sort by average score if presenting leaderboard
     else:
+        fieldKeys()  # prints out the options for sorting
         fieldToSort = input("Sort Records by which Field: ")
     fieldToSort = int(fieldToSort)
     sortedList = sorted(data, key=lambda studentNum: studentNum[fieldToSort - 1], reverse=True)  # sorts the data by
@@ -172,15 +178,13 @@ def createStudent(dataSource):
     data = readFile(dataSource)
 
     studentID = "S000"
-    firstName = "X"
-    surname = "X"
 
-    if len(data) < 13:
+    if len(data) < 12:
         while studentID == "S000":
             studentID = getStudentID(dataSource)
         firstName = input("Enter First Name: ")
         surname = input("Enter Surname: ")
-        data.append([studentID, firstName, surname, '-', '-', '-', ])
+        data.append([studentID, firstName, surname, -1, -1, -1, 1])
         writeFile(dataSource, data)
         print("Student has been added.")
     else:
@@ -189,7 +193,7 @@ def createStudent(dataSource):
 
 def readData(dataSource):
     data = readFile(dataSource)
-    studentNum = input("Enter the Record Number: ")
+    studentNum = input("Enter the Record Index: ")
     studentNum = int(studentNum)
     studentOut = ""
     for item in data[studentNum]:
@@ -216,15 +220,19 @@ def updateStudent(dataSource):
         data[num][3] = score1
         data[num][4] = score2
         data[num][5] = score3
-        print(data[num])
 
-        writeFile(dataSource, data)
         getAverage(dataSource)
+        print(data[num])
+        writeFile(dataSource, data)
+
+        print(data[num])
         print("Student's data has been updated.")
     except ValueError:
         print("Invalid ID, see all records for list of IDs")
     except IndexError:
         print("Invalid ID, see all records for list of IDs")
+
+# Bug in update student where invalid ID is shown for valid input
 
 
 def deleteStudent(dataSource):
@@ -313,3 +321,4 @@ while True:
             displaySorted(fileSource, True)
 
     pause = input("\nPress enter to continue: ")
+    clearScreen()
